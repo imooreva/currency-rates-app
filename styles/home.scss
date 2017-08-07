@@ -1,0 +1,51 @@
+table, th, td {
+    border: 0.125em solid #013665 !important;
+    color: #333333;
+    font-size: 1.25em !important;
+    margin: 0 auto;
+}
+
+td {
+    background-color: aliceblue !important;
+}
+
+.app-container {
+    background-color: lightblue;
+    border: 0.125em solid cornflowerblue;
+    border-radius: 0.5em;
+    min-height: 35%;
+    left: 50%;
+    margin: 3.0em 0;
+    padding-bottom: 0.5em;
+    position: absolute;
+    text-align: center;
+    transform: translateX(-50%);
+    min-width: 40%;
+}
+
+.currency-selectbox {
+    font-family: 'Comforta', sans-serif;
+    font-size: 1.5em;
+    margin: 1.0em 0;
+}
+
+.results {
+    display: inline-block;
+    height: 15.0em;
+    margin-top: 1.0em;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: auto;
+    padding: 0.5em;
+}
+
+.results thead>tr>th {
+    background-color: #01559D;
+    color: cornsilk;
+    text-align: center;
+}
+
+.table-header {
+    font-weight: 700;
+    text-align: center;
+}
