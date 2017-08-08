@@ -34,7 +34,7 @@ module.exports = {
                 //return new Error(res.data.error);
                 return res.data.error;
             } else {
-                return res.data.rates;
+                return res.data;
             }
         });
     },

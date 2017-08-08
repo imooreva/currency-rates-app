@@ -1,3 +1,7 @@
+html {
+    font-family: 'Comfortaa', 'sans-serif';
+}
+
 table, th, td {
     border: 0.125em solid #013665 !important;
     color: #333333;
@@ -6,12 +10,12 @@ table, th, td {
 }
 
 td {
-    background-color: aliceblue !important;
+    background-color: #FFFEF9 !important;
 }
 
 .app-container {
-    background-color: lightblue;
-    border: 0.125em solid cornflowerblue;
+    background-color: #D6ECF2;
+    border: 0.125em solid #6495ED;
     border-radius: 0.5em;
     min-height: 35%;
     left: 50%;
@@ -24,13 +28,23 @@ td {
 }
 
 .currency-selectbox {
-    font-family: 'Comforta', sans-serif;
+    font-family: 'Comfortaa', sans-serif;
     font-size: 1.5em;
-    margin: 1.0em 0;
+    margin: 0.25em 0;
+    padding: 0 0 !important;
+}
+
+.pure-button-active {
+    margin: 0.5em 0;
 }
 
 .pure-menu-list {
     padding-top: 1.0em;
+}
+
+.pure-menu-link {
+    color: #444444;
+    font-weight: 700;
 }
 
 .results {
@@ -45,7 +59,7 @@ td {
 
 .results thead>tr>th {
     background-color: #01559D;
-    color: cornsilk;
+    color: #F8F8FF;
     text-align: center;
 }
 

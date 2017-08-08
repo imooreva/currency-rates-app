@@ -1,11 +1,12 @@
 import React, {Component} from 'react';
-import {getLatest} from '.././api/currency.jsx';
+import {getHistorical} from '.././api/currency.jsx';
 import ResultsMain from './ResultsMain.jsx';
 
-class FormMain extends Component {
+class FormHistorical extends Component {
     constructor(props) {
         super(props);
         this.handleSearch = this.handleSearch.bind(this);
+        this.onAltChange = this.onAltChange.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.state = {
             date: undefined,
@@ -29,7 +30,7 @@ class FormMain extends Component {
             //window.location.hash = `#/?latest=${symbol}`;
         }
     }
-    handleSearch(symbol) {
+    handleSearch(symbol, date) {
         this.setState({
             date: undefined,
             errorMessage: undefined,
@@ -37,7 +38,7 @@ class FormMain extends Component {
             rates: undefined,
             symbol            
         });
-        getLatest(symbol).then((data) => {
+        getHistorical(symbol, date).then((data) => {
             this.setState({
                 date: data.date,
                 isLoading: false,
@@ -54,11 +55,24 @@ class FormMain extends Component {
     }
     onFormSubmit(e) {
         e.preventDefault();
-        let symbol = this.refs.symbol.value.toUpperCase();
-        if (symbol.length > 0) {
+        let symbol = (this.refs.other.value.length > 2) ? this.refs.other.value : this.refs.symbol.value.toUpperCase(),
+            date = this.refs.date.value;
+        if (symbol.length > 0 && date.length > 0) {
             //this.refs.symbol.value = '';
-            this.handleSearch(symbol);
+            this.handleSearch(symbol, date);
         };
+    }
+    onAltChange(e) {
+        e.preventDefault();
+        this.refs.other.value = this.refs.other.value.toUpperCase();
+        if (this.refs.other.value.length > 2) {
+            document.getElementsByClassName('currency-selectbox')[0].disabled = true;
+            document.getElementsByClassName('currency-selectbox')[0].style.opacity = 0.4;
+        }
+        else {
+            document.getElementsByClassName('currency-selectbox')[0].disabled = false;
+            document.getElementsByClassName('currency-selectbox')[0].style.opacity = null;
+        }
     }
     render() {
         let {date, errorMessage, isLoading, rates, symbol} = this.state;
@@ -69,9 +83,10 @@ class FormMain extends Component {
                 return <ResultsMain symbol={symbol} rates={rates} date={date} dataerrorMessage={errorMessage}/>;
             }
         };
+        let todaysDate = new Date().toISOString().slice(0,10);
         return (
             <div>
-                <h1>Latest Rates</h1>
+                <h1>Historical Rates</h1>
                 <form onSubmit={this.onFormSubmit} className="pure-form">
                     <div>
                         <select ref="symbol" className="currency-selectbox">
@@ -109,9 +124,9 @@ class FormMain extends Component {
                             <option value="ZAR">ZAR - South African Rand</option>
                         </select>
                     </div>
-                    <div>
-                        <button className="pure-button pure-button-active">Get Latest Rates</button>
-                    </div>
+                    <div><input type="date" ref="date" min="1999-01-01" max={todaysDate}/></div>
+                    <div><p>Enter another currency:</p><input type="text" ref="other" onChange={this.onAltChange}/></div>                    
+                    <div><button className="pure-button pure-button-active">Get Historical Rates</button></div>
                 </form>
                 {renderMessage()}
             </div>
@@ -119,4 +134,4 @@ class FormMain extends Component {
     }
 }
 
-export default FormMain;
+export default FormHistorical;
