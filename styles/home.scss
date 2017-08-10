@@ -1,4 +1,5 @@
 html {
+    background-color: #183C4E;
     font-family: 'Comfortaa', 'sans-serif';
 }
 
@@ -27,10 +28,16 @@ td {
     min-width: 40%;
 }
 
-.currency-selectbox {
+.converter-input {
+    display: block !important;
+    margin: 0 auto;
+}
+
+.currency-select-list {
+    display: block !important;
     font-family: 'Comfortaa', sans-serif;
     font-size: 1.5em;
-    margin: 0.25em 0;
+    margin: 0.25em auto;
     padding: 0 0 !important;
 }
 
