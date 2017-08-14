@@ -67,7 +67,7 @@ class Converter extends Component {
         let {date, errorMessage, isLoading, rates, symbol} = this.state;
         let renderMessage = () => {
             if (isLoading) {
-                return <h2>Fetching data...</h2>;
+                return 'Fetching data...';
             } else if (symbol && rates) {
                 return `Data loaded for ${symbol} as of ${date}`;
             }
@@ -87,7 +87,7 @@ class Converter extends Component {
                         <button className="pure-button pure-button-active">Get Latest Rates</button>
                     </div>
                 </form>
-                {renderMessage()}
+                <p>{renderMessage()}</p>
             </div>
         )
     }

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, {Component} from 'react';
+import {connect} from 'react-redux';
 
-export default function ResultsMain(props) {
+function ResultsMain(props) {
     if (typeof props.errorMessage === 'string') {
         return (
             <div className="text-center">
@@ -37,3 +38,5 @@ export default function ResultsMain(props) {
         </div>
     );
 }
+
+export default connect()(ResultsMain);

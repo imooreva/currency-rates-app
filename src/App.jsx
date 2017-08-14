@@ -9,11 +9,10 @@ import Nav from './components/Nav.jsx';
 import ResultsMain from './components/ResultsMain.jsx';
 
 export default function App() {
-        return (
-            <div className="app-container">
-                <Nav/>
-                <Main/>
-            </div>
-        );
-}
-
+    return (
+        <div className="app-container">
+            <Nav/>
+            <Main/>
+        </div>
+    );
+};

@@ -1,69 +1,50 @@
 import React, {Component} from 'react';
-import {getLatest} from '.././api/currency.jsx';
+import {getLatest} from '../api/currency.jsx';
 import ResultsMain from './ResultsMain.jsx';
 import SelectList from './SelectList.jsx';
+
+import {connect} from 'react-redux';
+import * as Actions from '../actions/index.js';
+import {store} from '../store/index.js';
 
 class FormMain extends Component {
     constructor(props) {
         super(props);
         this.handleSearch = this.handleSearch.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
-        this.onSelectChange = this.onSelectChange.bind(this);
-        this.state = {
-            date: undefined,
-            errorMessage: undefined,
-            isLoading: false,
-            rates: undefined,
-            symbol: 'USD'
-        };
     }
     handleSearch(symbol) {
-        this.setState({
-            date: undefined,
-            errorMessage: undefined,
-            isLoading: true,
-            rates: undefined,
-            symbol            
-        });
+        let {dispatch} = this.props;
+        dispatch(Actions.clearState(true));
+        dispatch(Actions.isLoading(true));        
         getLatest(symbol).then((data) => {
-            this.setState({
-                date: data.date,
-                isLoading: false,
-                rates: data.rates,
-                symbol: data.base
-            });
+            let {dispatch} = this.props;
+            dispatch(Actions.getRates(data.rates));
+            dispatch(Actions.getDate(data.date));
+            dispatch(Actions.isLoading(false));
+            dispatch(Actions.changeSymbol(data.base));
         }, (e) => {
-            this.setState({
-                errorMessage: e.response.data.error,
-                isLoading: false,
-                symbol: undefined
-            });
+            dispatch(Actions.errorMessage(e.response.data.error));
+            dispatch(Actions.isLoading(false));
         });
     }
     onFormSubmit(e) {
         e.preventDefault();
-        this.handleSearch(this.state.symbol);
-    }
-    onSelectChange(e) {
-        this.setState({
-            symbol : e.target.value
-        });
+        let selected = document.getElementsByClassName('currency-select-list')[0].value;
+        this.handleSearch(selected);
     }
     render() {
-        let {date, errorMessage, isLoading, rates, symbol} = this.state;
+        let state = store.getState().mainReducer;
         let renderMessage = () => {
-            if (isLoading) {
-                return <h2>Fetching data...</h2>;
-            } else if (symbol && rates) {
-                return <ResultsMain symbol={symbol} rates={rates} date={date} errorMessage={errorMessage}/>;
-            }
+            if (state.isLoading) return <h2>Fetching data...</h2>;
+            else if (state.rates) return <ResultsMain symbol={state.symbol} rates={state.rates} date={state.date} errorMessage={state.errorMessage}/>;
         };
         return (
             <div>
                 <h1>Latest Rates</h1>
                 <form onSubmit={this.onFormSubmit} className="pure-form">
                     <div>
-                        <SelectList onSelectChange={this.onSelectChange}/>
+                        <SelectList/>
                     </div>
                     <div>
                         <button className="pure-button pure-button-active">Get Latest Rates</button>
@@ -75,4 +56,11 @@ class FormMain extends Component {
     }
 }
 
-export default FormMain;
+const mapStateToProps = state => ({
+    symbol: state.mainReducer.symbol,
+    rates: state.mainReducer.rates,
+    date: state.mainReducer.date,
+    errorMessage: state.mainReducer.errorMessage
+})
+
+export default connect(mapStateToProps)(FormMain);
