@@ -6,6 +6,6 @@ This project uses an API provided by [Fixer.io](http://www.fixer.io).
 To Do List:
 
 * ~~Add Converter component~~
+* ~~Remove component-stored state and add redux~~
 * Clean up, add comments where needed
-* Remove component-stored state and add redux
 * Router options/reconfigure?
