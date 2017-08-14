@@ -19,6 +19,13 @@ export var changeSymbol = symbol => {
     }
 };
 
+export var compareSymbol = compareSymbol => {
+    return {
+        type: 'COMPARE_SYMBOL',
+        compareSymbol
+    }
+};
+
 export var getDate = date => {
     return {
         type: 'DATE',

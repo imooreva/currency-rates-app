@@ -3,61 +3,34 @@ import {getHistorical} from '.././api/currency.jsx';
 import ResultsMain from './ResultsMain.jsx';
 import SelectList from './SelectList.jsx';
 
+import {connect} from 'react-redux';
+import * as Actions from '../actions/index.js';
+import {store} from '../store/index.js';
+
 class FormHistorical extends Component {
     constructor(props) {
         super(props);
         this.handleSearch = this.handleSearch.bind(this);
         this.onAltChange = this.onAltChange.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
-        this.onSelectChange = this.onSelectChange.bind(this);
-        this.state = {
-            date: undefined,
-            errorMessage: undefined,
-            isLoading: false,
-            rates: undefined,
-            symbol: 'USD'
-        };
     }
-//    componentDidMount() {
-//        let symbol = this.props.symbol;
-//        if (symbol && symbol.length > 0) {
-//            this.handleSearch(symbol);
-//            //window.location.hash = `#/?latest=${symbol}`;
-//        }
-//    }
-//    componentWillReceiveProps(newProps) {
-//        let symbol = newProps.symbol;
-//        if (symbol && symbol.length > 0) {
-//            this.handleSearch(symbol);
-//            //window.location.hash = `#/?latest=${symbol}`;
-//        }
-//    }
     handleSearch(symbol, date) {
-        this.setState({
-            date: undefined,
-            errorMessage: undefined,
-            isLoading: true,
-            rates: undefined,
-            symbol            
-        });
+        let {dispatch} = this.props;
+        dispatch(Actions.clearState(true));
+        dispatch(Actions.isLoading(true));        
         getHistorical(symbol, date).then((data) => {
-            this.setState({
-                date: data.date,
-                isLoading: false,
-                rates: data.rates,
-                symbol: data.base
-            });
+            dispatch(Actions.getRates(data.rates));
+            dispatch(Actions.getDate(data.date));
+            dispatch(Actions.isLoading(false));
+            dispatch(Actions.changeSymbol(data.base));
         }, (e) => {
-            this.setState({
-                errorMessage: e.response.data.error,
-                isLoading: false,
-                symbol: undefined
-            });
+            dispatch(Actions.errorMessage(e.response.data.error));
+            dispatch(Actions.isLoading(false));
         });
     }
     onFormSubmit(e) {
         e.preventDefault();
-        let symbol = (this.refs.other.value.length > 2) ? this.refs.other.value : this.state.symbol,
+        let symbol = (this.refs.other.value.length > 2) ? this.refs.other.value : document.getElementsByClassName('currency-select-list')[0].value,
             date = this.refs.date.value;
         if (symbol.length > 0 && date.length > 0) {
             this.handleSearch(symbol, date);
@@ -75,19 +48,11 @@ class FormHistorical extends Component {
             document.getElementsByClassName('currency-select-list')[0].style.opacity = null;
         }
     }
-    onSelectChange(e) {
-        this.setState({
-            symbol : e.target.value
-        });
-    }
     render() {
-        let {date, errorMessage, isLoading, rates, symbol} = this.state;
+        let state = store.getState().mainReducer;
         let renderMessage = () => {
-            if (isLoading) {
-                return <h2>Fetching data...</h2>;
-            } else if (symbol && rates) {
-                return <ResultsMain symbol={symbol} rates={rates} date={date} dataerrorMessage={errorMessage}/>;
-            }
+            if (state.isLoading) return <h2>Fetching data...</h2>;
+            else if (state.rates) return <ResultsMain symbol={state.symbol} rates={state.rates} date={state.date} errorMessage={state.errorMessage}/>;
         };
         let todaysDate = new Date().toISOString().slice(0,10);
         return (
@@ -95,7 +60,7 @@ class FormHistorical extends Component {
                 <h1>Historical Rates</h1>
                 <form onSubmit={this.onFormSubmit} className="pure-form">
                     <div>
-                        <SelectList onSelectChange={this.onSelectChange}/>
+                        <SelectList defaultValue={state.symbol}/>
                     </div>
                     <div><input type="date" ref="date" min="1999-01-01" max={todaysDate}/></div>
                     <div><p>Enter another currency:</p><input type="text" ref="other" onChange={this.onAltChange}/></div>                    
@@ -107,4 +72,11 @@ class FormHistorical extends Component {
     }
 }
 
-export default FormHistorical;
+const mapStateToProps = state => ({
+    symbol: state.mainReducer.symbol,
+    rates: state.mainReducer.rates,
+    date: state.mainReducer.date,
+    errorMessage: state.mainReducer.errorMessage
+})
+
+export default connect(mapStateToProps)(FormHistorical);

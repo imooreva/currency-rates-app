@@ -6,6 +6,10 @@ var mainReducer = (state = {}, action) => {
             return Object.assign({}, state, {
                 symbol: action.symbol
             });
+        case 'COMPARE_SYMBOL':
+            return Object.assign({}, state, {
+                compareSymbol: action.compareSymbol
+            });
         case 'DATE':
             return Object.assign({}, state, {
                 date: action.date

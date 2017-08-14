@@ -18,7 +18,6 @@ class FormMain extends Component {
         dispatch(Actions.clearState(true));
         dispatch(Actions.isLoading(true));        
         getLatest(symbol).then((data) => {
-            let {dispatch} = this.props;
             dispatch(Actions.getRates(data.rates));
             dispatch(Actions.getDate(data.date));
             dispatch(Actions.isLoading(false));
@@ -44,7 +43,7 @@ class FormMain extends Component {
                 <h1>Latest Rates</h1>
                 <form onSubmit={this.onFormSubmit} className="pure-form">
                     <div>
-                        <SelectList/>
+                        <SelectList defaultValue={state.symbol}/>
                     </div>
                     <div>
                         <button className="pure-button pure-button-active">Get Latest Rates</button>

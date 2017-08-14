@@ -2,74 +2,55 @@ import React, {Component} from 'react';
 import {getLatest} from '.././api/currency.jsx';
 import SelectList from './SelectList.jsx';
 
+import {connect} from 'react-redux';
+import * as Actions from '../actions/index.js';
+import {store} from '../store/index.js';
+
 class Converter extends Component {
     constructor(props) {
         super(props);
         this.handleSearch = this.handleSearch.bind(this);
         this.convertRate = this.convertRate.bind(this);
-        this.onSelectCompare = this.onSelectCompare.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
         this.onSelectChange = this.onSelectChange.bind(this);
-        this.state = {
-            compare: 'EUR',
-            date: undefined,
-            errorMessage: undefined,
-            isLoading: false,
-            rates: undefined,
-            symbol: 'USD'
-        };
     }
     handleSearch(symbol) {
-        this.setState({
-            date: undefined,
-            errorMessage: undefined,
-            isLoading: true,
-            rates: undefined,
-            symbol            
-        });
+        let {dispatch} = this.props;
+        dispatch(Actions.clearState(true));
+        dispatch(Actions.isLoading(true));        
         getLatest(symbol).then((data) => {
-            this.setState({
-                date: data.date,
-                isLoading: false,
-                rates: data.rates,
-                symbol: data.base
-            });
+            dispatch(Actions.getRates(data.rates));
+            dispatch(Actions.getDate(data.date));
+            dispatch(Actions.isLoading(false));
+            dispatch(Actions.changeSymbol(data.base));
         }, (e) => {
-            this.setState({
-                errorMessage: e.response.data.error,
-                isLoading: false,
-                symbol: undefined
-            });
+            dispatch(Actions.errorMessage(e.response.data.error));
+            dispatch(Actions.isLoading(false));
         });
     }
     convertRate(e) {
-        let compare = this.state.compare;
-        if (e.target.value.length > 0) return this.refs.output.value = e.target.value * this.state.rates[compare];
+        this.refs.input.value = this.refs.input.value.replace(/[^\d]/,'');
+        let compare = document.getElementsByClassName('currency-select-list')[1].value;
+        if (e.target.value.length > 0) return this.refs.output.value = e.target.value * store.getState().mainReducer.rates[compare].toFixed(4);
         else if (e.target.value.length === 0) return this.refs.output.value = 0;
     }
     onFormSubmit(e) {
         e.preventDefault();
-        this.handleSearch(this.state.symbol);
+        let selected = document.getElementsByClassName('currency-select-list')[0].value;
+        this.handleSearch(selected);
     }
     onSelectChange(e) {
-        this.setState({
-            symbol: e.target.value
-        })
-    }
-    onSelectCompare(e) {
-        let compare = e.target.value
-        this.setState({
-            compare
-        });
-        this.refs.output.value = this.refs.input.value * this.state.rates[compare];
+        let {dispatch} = this.props;
+        dispatch(Actions.compareSymbol(e.target.value));
+        this.refs.output.value = this.refs.input.value * store.getState().mainReducer.rates[e.target.value];
     }
     render() {
-        let {date, errorMessage, isLoading, rates, symbol} = this.state;
+        let state = store.getState().mainReducer;
         let renderMessage = () => {
-            if (isLoading) {
+            if (state.isLoading) {
                 return 'Fetching data...';
-            } else if (symbol && rates) {
-                return `Data loaded for ${symbol} as of ${date}`;
+            } else if (state.symbol && state.rates) {
+                return `${state.symbol} data from ${state.date} loaded`;
             }
         };
         return (
@@ -78,12 +59,12 @@ class Converter extends Component {
                 <form onSubmit={this.onFormSubmit} className="pure-form">
                     <div>
                         <input type="text" className="pure-input converter-input" ref="input" onChange={this.convertRate}/>
-                        <SelectList onSelectChange={this.onSelectChange}/>
+                        <SelectList defaultValue={state.symbol}/>
                     </div>
                     <h2>=</h2>
                     <div>
-                        <input type="text" className="pure-input converter-input" ref="output"/>
-                        <SelectList onSelectCompare={this.onSelectCompare} defaultValue={'EUR'}/>
+                        <input type="number" className="pure-input converter-input" ref="output" defaultValue="0"/>
+                        <SelectList onSelectChange={this.onSelectChange} defaultValue={state.compareSymbol}/>
                         <button className="pure-button pure-button-active">Get Latest Rates</button>
                     </div>
                 </form>
@@ -93,4 +74,12 @@ class Converter extends Component {
     }
 }
 
-export default Converter;
+const mapStateToProps = state => ({
+    symbol: state.mainReducer.symbol,
+    rates: state.mainReducer.rates,
+    date: state.mainReducer.date,
+    errorMessage: state.mainReducer.errorMessage,
+    compareSymbol: state.mainReducer.compareSymbol
+})
+
+export default connect(mapStateToProps)(Converter);
