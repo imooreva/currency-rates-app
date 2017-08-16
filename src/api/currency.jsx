@@ -14,19 +14,6 @@ module.exports = {
             }
         });
     },
-//    getLatestMulti(symb, symbs) {
-//        var symbol = symb;
-//        var symbols = symbs;
-//        var reqURL = `${baseURL}/latest?symbols=${symbols}&base=${symbol}`;
-//        return axios.get(reqURL).then((res) => {
-//            if (res.data.error) {
-//                //return new Error(res.data.error);
-//                return res.data.error
-//            } else {
-//                return res.data.rates;
-//            }
-//        });
-//    },
     getHistorical(symbol, day) {
         let reqURL = `${baseURL}/${day}?base=${symbol}`;
         return axios.get(reqURL).then((res) => {
@@ -37,8 +24,5 @@ module.exports = {
                 return res.data;
             }
         });
-    },
-    handleSelectBox(i) {
-        return i.state.defaultCurrency;
-    }    
+    }
 }

@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import * as Actions from '../actions/index.js';
 import {store} from '../store/index.js';
 
-class Converter extends Component {
+class FormConvert extends Component {
     constructor(props) {
         super(props);
         this.handleSearch = this.handleSearch.bind(this);
@@ -29,7 +29,7 @@ class Converter extends Component {
         });
     }
     convertRate(e) {
-        this.refs.input.value = this.refs.input.value.replace(/[^\d]/,'');
+        this.refs.input.value = this.refs.input.value.replace(/[^0-9.]/g,'');
         let compare = document.getElementsByClassName('currency-select-list')[1].value;
         if (e.target.value.length > 0) return this.refs.output.value = e.target.value * store.getState().mainReducer.rates[compare].toFixed(4);
         else if (e.target.value.length === 0) return this.refs.output.value = 0;
@@ -50,12 +50,12 @@ class Converter extends Component {
             if (state.isLoading) {
                 return 'Fetching data...';
             } else if (state.symbol && state.rates) {
-                return `${state.symbol} data from ${state.date} loaded`;
+                return `${state.symbol} currency data from ${state.date} loaded`;
             }
         };
         return (
             <div>
-                <h1>Rate to Rate</h1>
+                <h1>Convert Rates</h1>
                 <form onSubmit={this.onFormSubmit} className="pure-form">
                     <div>
                         <input type="text" className="pure-input converter-input" ref="input" onChange={this.convertRate}/>
@@ -82,4 +82,4 @@ const mapStateToProps = state => ({
     compareSymbol: state.mainReducer.compareSymbol
 })
 
-export default connect(mapStateToProps)(Converter);
+export default connect(mapStateToProps)(FormConvert);

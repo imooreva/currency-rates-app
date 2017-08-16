@@ -62,7 +62,7 @@ class FormHistorical extends Component {
                     <div>
                         <SelectList defaultValue={state.symbol}/>
                     </div>
-                    <div><input type="date" ref="date" min="1999-01-01" max={todaysDate}/></div>
+                    <div><input type="date" ref="date" min="1999-01-01" max={todaysDate} defaultValue={state.date}/></div>
                     <div><p>Enter another currency:</p><input type="text" ref="other" onChange={this.onAltChange}/></div>                    
                     <div><button className="pure-button pure-button-active">Get Historical Rates</button></div>
                 </form>

@@ -16,7 +16,7 @@ function ResultsMain(props) {
     else tableHeader = `Rates for ${props.data.symbol}:`;
     
     while (i < Object.values(props.rates).length) {
-        arr.push(Object.keys(props.rates)[i] + ":" + Number(Object.values(props.rates)[i]).toFixed(3))
+        arr.push(Object.keys(props.rates)[i] + ":" + Number(Object.values(props.rates)[i]))
         i++
     };
     arr.sort();
