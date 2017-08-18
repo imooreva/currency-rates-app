@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {getLatest} from '../api/currency.jsx';
+import {getLatest} from '../api/currency.js';
 import ResultsMain from './ResultsMain.jsx';
 import SelectList from './SelectList.jsx';
 
@@ -23,8 +23,8 @@ class FormMain extends Component {
             dispatch(Actions.isLoading(false));
             dispatch(Actions.changeSymbol(data.base));
         }, (e) => {
-            dispatch(Actions.errorMessage(e.response.data.error));
             dispatch(Actions.isLoading(false));
+            dispatch(Actions.errorMessage(e.data.error));
         });
     }
     onFormSubmit(e) {
@@ -36,7 +36,8 @@ class FormMain extends Component {
         let state = store.getState().mainReducer;
         let renderMessage = () => {
             if (state.isLoading) return <h2>Fetching data...</h2>;
-            else if (state.rates) return <ResultsMain symbol={state.symbol} rates={state.rates} date={state.date} errorMessage={state.errorMessage}/>;
+            else if (state.errorMessage) return <h2>Error: {state.errorMessage}</h2>;
+            else if (state.rates) return <ResultsMain symbol={state.symbol} rates={state.rates} date={state.date}/>;
         };
         return (
             <div>

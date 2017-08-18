@@ -1,19 +1,5 @@
 import * as types from '../constants/index.js';
 
-export var changeName = (name) => {
-    return {
-        type: types.CHANGE_NAME,
-        name
-    }
-};
-
-export var testAction = (i) => {
-    return {
-        type: types.TEST_ACTION,
-        i
-    }
-};
-
 export var changeSymbol = symbol => {
     return {
         type: types.SYMBOL,
@@ -49,10 +35,10 @@ export var isLoading = bool => {
     }
 };
 
-export var errorMessage = err => {
+export var errorMessage = errorMessage => {
     return {
         type: types.ERROR_MESSAGE,
-        err
+        errorMessage
     }
 };
 

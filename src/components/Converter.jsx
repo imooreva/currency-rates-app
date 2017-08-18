@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {getLatest} from '.././api/currency.jsx';
+import {getLatest} from '../api/currency.js';
 import SelectList from './SelectList.jsx';
 
 import {connect} from 'react-redux';

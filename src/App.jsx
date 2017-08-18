@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 
-import {getLatest} from './api/currency.jsx';
+import {getLatest} from './api/currency.js';
 import FormMain from './components/FormMain.jsx';
 import FormHistorical from './components/FormHistorical.jsx';
 import About from './components/About.jsx';

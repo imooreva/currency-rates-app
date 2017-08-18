@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {getHistorical} from '.././api/currency.jsx';
+import {getHistorical} from '../api/currency.js';
 import ResultsMain from './ResultsMain.jsx';
 import SelectList from './SelectList.jsx';
 
@@ -24,8 +24,8 @@ class FormHistorical extends Component {
             dispatch(Actions.isLoading(false));
             dispatch(Actions.changeSymbol(data.base));
         }, (e) => {
-            dispatch(Actions.errorMessage(e.response.data.error));
             dispatch(Actions.isLoading(false));
+            dispatch(Actions.errorMessage(e.data.error));
         });
     }
     onFormSubmit(e) {
@@ -52,7 +52,8 @@ class FormHistorical extends Component {
         let state = store.getState().mainReducer;
         let renderMessage = () => {
             if (state.isLoading) return <h2>Fetching data...</h2>;
-            else if (state.rates) return <ResultsMain symbol={state.symbol} rates={state.rates} date={state.date} errorMessage={state.errorMessage}/>;
+            else if (state.errorMessage) return <h2>Error: {state.errorMessage}</h2>;
+            else if (state.rates) return <ResultsMain symbol={state.symbol} rates={state.rates} date={state.date}/>;
         };
         let todaysDate = new Date().toISOString().slice(0,10);
         return (
@@ -62,8 +63,8 @@ class FormHistorical extends Component {
                     <div>
                         <SelectList defaultValue={state.symbol}/>
                     </div>
-                    <div><input type="date" ref="date" min="1999-01-01" max={todaysDate} defaultValue={state.date}/></div>
-                    <div><p>Enter another currency:</p><input type="text" ref="other" onChange={this.onAltChange}/></div>                    
+                    <div><input type="date" ref="date" className="date-picker" min="1999-01-01" max={todaysDate} defaultValue={state.date}/></div>
+                    <div><p>Enter another currency:</p><input type="text" ref="other" onChange={this.onAltChange} placeholder="Enter symbol (e.g. ISK)"/></div>                    
                     <div><button className="pure-button pure-button-active">Get Historical Rates</button></div>
                 </form>
                 {renderMessage()}
